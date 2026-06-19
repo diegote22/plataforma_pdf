@@ -1,0 +1,19 @@
+# Dependencias
+node_modules/
+
+# Secretos / entorno
+.env
+.env.local
+.env.*.local
+
+# Tooling local (skills instaladas, no son del proyecto)
+.claude/
+
+# Builds
+dist/
+build/
+
+# Logs / OS
+*.log
+.DS_Store
+Thumbs.db
