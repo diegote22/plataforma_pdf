@@ -1,0 +1,21 @@
+[
+  {
+    "category_slug": "biologia",
+    "title": "Resumen: La Célula",
+    "description": "Estructura y función celular, organelas y membrana. Ideal para repaso rápido antes del parcial.",
+    "features": "12 páginas; Diagramas a color; Glosario incluido",
+    "price": 1500,
+    "cover": "celula-cover.jpg",
+    "file": "celula.pdf",
+    "is_active": true
+  },
+  {
+    "category_slug": "fisica",
+    "title": "Infografía: Leyes de Newton",
+    "description": "Las tres leyes con ejemplos y fórmulas en una sola lámina.",
+    "features": "1 lámina A3; Alta resolución; Para imprimir",
+    "price": 900,
+    "cover": "newton-cover.png",
+    "file": "newton.pdf"
+  }
+]

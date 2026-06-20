@@ -1,0 +1,113 @@
+@import 'tailwindcss';
+
+/* =====================================================================
+   Tokens — guia de campo cientifica. Papel crema, tinta, acentos por
+   categoria. Tipografia editorial: Fraunces (display) + Hanken (UI) +
+   Space Mono (metadatos).
+   ===================================================================== */
+@theme {
+  --font-display: 'Fraunces', ui-serif, Georgia, serif;
+  --font-sans: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, monospace;
+
+  --color-paper: #f6f2e9;
+  --color-paper-2: #efe8d8;
+  --color-paper-3: #e7ddc8;
+  --color-ink: #1a1714;
+  --color-ink-soft: #524b3f;
+  --color-ink-faint: #8c8474;
+  --color-line: #d8cdb6;
+
+  --color-bio: #2f7d4f;
+  --color-bio-soft: #dfeede;
+  --color-fis: #2d6cb5;
+  --color-fis-soft: #dbe7f4;
+  --color-qui: #8a4fa8;
+  --color-qui-soft: #ecdef0;
+  --color-mat: #c7551f;
+  --color-mat-soft: #f6e2d3;
+
+  --color-brand: #1a1714;
+}
+
+/* =====================================================================
+   Base
+   ===================================================================== */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-feature-settings: 'ss01', 'cv01';
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  /* respeto del notch en mobile */
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left);
+}
+
+/* Grano sutil sobre todo, no interactivo */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0.4;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* Display helpers */
+.font-display {
+  font-family: var(--font-display);
+  font-optical-sizing: auto;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Foco accesible */
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+/* Reglas decorativas */
+.rule {
+  border: none;
+  border-top: 1px solid var(--color-line);
+}
+
+/* Botón base estilo "sello" */
+.btn-ink {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  font-weight: 600;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.btn-ink:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 6px 0 0 var(--color-ink);
+}
+.btn-ink:active {
+  transform: translateY(0);
+  box-shadow: 2px 2px 0 0 var(--color-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

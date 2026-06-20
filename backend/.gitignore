@@ -3,3 +3,7 @@ node_modules/
 .env.local
 *.log
 .DS_Store
+
+# Carga de materiales (archivos locales, no van al repo)
+scripts/assets/
+scripts/materials.json

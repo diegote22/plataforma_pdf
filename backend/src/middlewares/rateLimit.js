@@ -18,3 +18,12 @@ export const downloadLimiter = rateLimit({
   legacyHeaders: false,
   message: { error: 'Demasiadas solicitudes, intenta en un momento' },
 });
+
+// Login admin: estricto, frena fuerza bruta de la password.
+export const loginLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 min
+  max: 8,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Demasiados intentos. Esperá unos minutos.' },
+});

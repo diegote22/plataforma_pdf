@@ -8,6 +8,7 @@ import materialsRouter from './routes/materials.js';
 import ordersRouter from './routes/orders.js';
 import webhooksRouter from './routes/webhooks.js';
 import downloadRouter from './routes/download.js';
+import adminRouter from './routes/admin.js';
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.use('/api/materials', materialsRouter);
 app.use('/api/orders', ordersRouter);
 app.use('/api/webhooks', webhooksRouter);
 app.use('/api/download', downloadRouter);
+app.use('/api/admin', adminRouter);
 
 // 404
 app.use((_req, res) => {

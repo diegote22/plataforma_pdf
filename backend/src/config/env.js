@@ -22,6 +22,14 @@ export const env = {
     storageBucket: process.env.SUPABASE_STORAGE_BUCKET || 'materials',
   },
 
+  admin: {
+    // Password de acceso al panel. Si esta vacio, el login queda deshabilitado.
+    password: process.env.ADMIN_PASSWORD || '',
+    // Secreto para firmar los JWT de sesion admin.
+    jwtSecret: process.env.JWT_SECRET || '',
+    tokenTtl: process.env.ADMIN_TOKEN_TTL || '12h',
+  },
+
   mp: {
     accessToken: process.env.MP_ACCESS_TOKEN || '',
     // Secreto de firma del webhook (MP Dashboard > Webhooks). Valida que la
