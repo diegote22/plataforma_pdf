@@ -89,6 +89,18 @@ export const listMaterials = asyncHandler(async (_req, res) => {
   res.json(data);
 });
 
+// GET /api/admin/materials/:id  (uno, completo, sin exponer nada peligroso al cliente)
+export const getMaterial = asyncHandler(async (req, res) => {
+  const { data, error } = await supabase
+    .from('materials')
+    .select('id, category_id, title, description, features, price, price_view, is_active, file_type, cover_image_url, preview_url, categories(name, slug)')
+    .eq('id', req.params.id)
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) return res.status(404).json({ error: 'Material no encontrado' });
+  res.json(data);
+});
+
 // POST /api/admin/materials  (multipart: file, cover + campos)
 export const createMaterial = asyncHandler(async (req, res) => {
   const { category_id, title, description, features, price, price_view } = req.body;

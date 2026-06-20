@@ -49,6 +49,7 @@ export const adminCreateCategory = (payload) =>
   adminFetch('/api/admin/categories', { method: 'POST', body: JSON.stringify(payload) });
 
 export const adminMaterials = () => adminFetch('/api/admin/materials');
+export const adminGetMaterial = (id) => adminFetch(`/api/admin/materials/${id}`);
 export const adminCreateMaterial = (formData) =>
   adminFetch('/api/admin/materials', { method: 'POST', body: formData });
 export const adminUpdateMaterial = (id, patch) =>

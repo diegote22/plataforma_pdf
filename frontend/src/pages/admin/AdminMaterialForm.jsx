@@ -6,7 +6,7 @@ export default function AdminMaterialForm() {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [form, setForm] = useState({
-    category_id: '', title: '', description: '', features: '', price: '',
+    category_id: '', title: '', description: '', features: '', price: '', price_view: '',
   });
   const [file, setFile] = useState(null);
   const [cover, setCover] = useState(null);
@@ -31,6 +31,7 @@ export default function AdminMaterialForm() {
     fd.append('description', form.description);
     fd.append('features', form.features);
     fd.append('price', form.price);
+    if (form.price_view !== '') fd.append('price_view', form.price_view);
     fd.append('file', file);
     if (cover) fd.append('cover', cover);
 
@@ -73,7 +74,15 @@ export default function AdminMaterialForm() {
             className="mt-1.5 w-full border border-line bg-paper px-4 py-3 outline-none focus:border-ink" />
         </label>
 
-        <Field label="Precio (ARS)" type="number" min="0" value={form.price} onChange={set('price')} placeholder="1500" />
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Field label="Precio descarga (ARS)" type="number" min="0" value={form.price}
+            onChange={set('price')} placeholder="1500" />
+          <Field label="Precio ver online (opcional)" type="number" min="0" value={form.price_view}
+            onChange={set('price_view')} placeholder="900" />
+        </div>
+        <p className="-mt-2 text-xs text-ink-faint">
+          Dejá vacío “ver online” si ese material solo se vende para descargar.
+        </p>
 
         <FileField label="Archivo del material (PDF, video, zip…)" accept=".pdf,.zip,video/*,image/*"
           file={file} onChange={(e) => setFile(e.target.files?.[0] || null)} required />

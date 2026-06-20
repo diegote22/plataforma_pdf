@@ -5,6 +5,7 @@ import {
   listCategories,
   createCategory,
   listMaterials,
+  getMaterial,
   createMaterial,
   updateMaterial,
   deleteMaterial,
@@ -28,6 +29,7 @@ router.get('/categories', requireAdmin, listCategories);
 router.post('/categories', requireAdmin, createCategory);
 
 router.get('/materials', requireAdmin, listMaterials);
+router.get('/materials/:id', requireAdmin, getMaterial);
 router.post(
   '/materials',
   requireAdmin,

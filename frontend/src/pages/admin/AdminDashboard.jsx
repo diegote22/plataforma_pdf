@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   adminMaterials, adminCategories, adminCreateCategory,
   adminUpdateMaterial, adminDeleteMaterial,
@@ -8,6 +8,7 @@ import { fmtPrice, metaFor } from '../../lib/meta.js';
 import { Loading } from '../../components/States.jsx';
 
 export default function AdminDashboard() {
+  const navigate = useNavigate();
   const [materials, setMaterials] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -101,6 +102,9 @@ export default function AdminDashboard() {
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex justify-end gap-2">
+                          <button onClick={() => navigate(`/admin/material/${m.id}/editar`)} className="label rounded-full border border-line px-3 py-1.5 hover:border-ink">
+                            Editar
+                          </button>
                           <button onClick={() => toggleActive(m)} className="label rounded-full border border-line px-3 py-1.5 hover:border-ink">
                             {m.is_active ? 'Ocultar' : 'Activar'}
                           </button>

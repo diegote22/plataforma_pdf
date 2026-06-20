@@ -17,6 +17,7 @@ import AdminLayout from './components/AdminLayout.jsx';
 import AdminLogin from './pages/admin/AdminLogin.jsx';
 import AdminDashboard from './pages/admin/AdminDashboard.jsx';
 import AdminMaterialForm from './pages/admin/AdminMaterialForm.jsx';
+import AdminMaterialEdit from './pages/admin/AdminMaterialEdit.jsx';
 import { isAuthed } from './lib/admin.js';
 
 function ScrollTop() {
@@ -43,6 +44,10 @@ export default function App() {
         <Route
           path="/admin/material/nuevo"
           element={<RequireAuth><AdminLayout><AdminMaterialForm /></AdminLayout></RequireAuth>}
+        />
+        <Route
+          path="/admin/material/:id/editar"
+          element={<RequireAuth><AdminLayout><AdminMaterialEdit /></AdminLayout></RequireAuth>}
         />
 
         {/* ---- Público ---- */}
