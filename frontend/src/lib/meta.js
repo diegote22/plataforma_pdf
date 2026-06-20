@@ -21,3 +21,12 @@ export const fmtPrice = (n) =>
     currency: 'ARS',
     maximumFractionDigits: 0,
   }).format(Number(n));
+
+// Precio mas bajo entre descarga y ver online (para mostrar "desde").
+export const lowestPrice = (m) => {
+  const opts = [m.price, m.price_view].filter((p) => p != null).map(Number);
+  return opts.length ? Math.min(...opts) : Number(m.price);
+};
+
+// True si el material ofrece ambas modalidades.
+export const hasBothModes = (m) => m.price != null && m.price_view != null;

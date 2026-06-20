@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { metaFor, fmtPrice } from '../lib/meta.js';
+import { metaFor, fmtPrice, lowestPrice, hasBothModes } from '../lib/meta.js';
 
 // Card estilo ficha de campo: lomo de color + portada + metadatos en mono.
 export default function MaterialCard({ material, index = 0 }) {
@@ -51,7 +51,10 @@ export default function MaterialCard({ material, index = 0 }) {
             <p className="line-clamp-2 text-sm text-ink-soft">{material.description}</p>
           )}
           <div className="mt-auto flex items-end justify-between pt-3">
-            <span className="font-mono text-lg font-bold">{fmtPrice(material.price)}</span>
+            <span className="font-mono text-lg font-bold">
+              {hasBothModes(material) && <span className="text-xs font-normal text-ink-faint">desde </span>}
+              {fmtPrice(lowestPrice(material))}
+            </span>
             <span className="label text-ink-faint transition-colors group-hover:text-ink">
               Ver →
             </span>

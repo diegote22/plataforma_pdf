@@ -86,11 +86,22 @@ export default function Download() {
               <li key={i} className="flex items-center justify-between gap-4 border border-line bg-paper-2 p-4">
                 <div className="flex items-center gap-3">
                   <span className="font-mono text-ink-faint">{String(i + 1).padStart(2, '0')}</span>
-                  <span className="font-display text-lg font-semibold">{d.title}</span>
+                  <div>
+                    <p className="font-display text-lg font-semibold">{d.title}</p>
+                    <span className="label text-ink-faint">
+                      {d.access_type === 'view' ? 'Lectura online' : 'Descarga'}
+                    </span>
+                  </div>
                 </div>
-                <a href={d.url} target="_blank" rel="noopener noreferrer" className="btn-ink shrink-0 px-5 py-2.5">
-                  Descargar ↓
-                </a>
+                {d.access_type === 'view' ? (
+                  <Link to={`/leer?order=${orderId}&token=${token}&i=${i}`} className="btn-ink shrink-0 px-5 py-2.5">
+                    Leer online →
+                  </Link>
+                ) : (
+                  <a href={d.url} target="_blank" rel="noopener noreferrer" className="btn-ink shrink-0 px-5 py-2.5">
+                    Descargar ↓
+                  </a>
+                )}
               </li>
             ))}
           </ul>

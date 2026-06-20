@@ -48,10 +48,10 @@ export const getDownloads = asyncHandler(async (req, res) => {
     return res.status(403).json({ error: 'Pago no confirmado' });
   }
 
-  // ---- Traer los materiales de la orden ----
+  // ---- Traer los materiales de la orden + modalidad ----
   const { data: items, error: itemsErr } = await supabase
     .from('order_items')
-    .select('materials(title, file_url)')
+    .select('access_type, materials(title, file_url, file_type)')
     .eq('order_id', orderId);
 
   if (itemsErr) throw itemsErr;
@@ -67,7 +67,12 @@ export const getDownloads = asyncHandler(async (req, res) => {
       .createSignedUrl(mat.file_url, SIGNED_URL_TTL);
 
     if (signErr) throw signErr;
-    downloads.push({ title: mat.title, url: signed.signedUrl });
+    downloads.push({
+      title: mat.title,
+      url: signed.signedUrl,
+      access_type: item.access_type || 'download',
+      file_type: mat.file_type,
+    });
   }
 
   res.json({ expires_in: SIGNED_URL_TTL, downloads });

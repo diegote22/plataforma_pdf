@@ -21,6 +21,7 @@ export const createOrder = asyncHandler(async (req, res) => {
   const email = str(req.body.email);
   const phone = str(req.body.phone);
   const material_id = str(req.body.material_id);
+  const access_type = req.body.access_type === 'view' ? 'view' : 'download';
 
   // ---- Validacion ----
   const errors = [];
@@ -36,12 +37,13 @@ export const createOrder = asyncHandler(async (req, res) => {
     p_email: email,
     p_phone: phone,
     p_material_id: material_id,
+    p_access_type: access_type,
   });
 
   if (error) {
-    // P0002 = material no disponible (lo levanta la function)
+    // P0002 = material no disponible; P0003 = modalidad no disponible
     if (error.code === 'P0002' || /no disponible/i.test(error.message)) {
-      return res.status(404).json({ error: 'Material no disponible' });
+      return res.status(404).json({ error: 'Material o modalidad no disponible' });
     }
     throw error;
   }

@@ -4,7 +4,7 @@ import { asyncHandler } from '../middlewares/asyncHandler.js';
 // Columnas SEGURAS del catalogo. NUNCA incluir file_url aca: ese link solo
 // se entrega como signed URL temporal tras confirmar el pago.
 const SAFE_COLUMNS =
-  'id, category_id, title, description, features, price, cover_image_url, file_type, created_at';
+  'id, category_id, title, description, features, price, price_view, cover_image_url, preview_url, file_type, created_at';
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

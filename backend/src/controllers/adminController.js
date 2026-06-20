@@ -1,11 +1,23 @@
 import crypto from 'node:crypto';
 import jwt from 'jsonwebtoken';
+import { PDFDocument } from 'pdf-lib';
 import { supabase } from '../config/supabase.js';
 import { env } from '../config/env.js';
 import { asyncHandler } from '../middlewares/asyncHandler.js';
 
 const COVERS_BUCKET = 'covers';
+const PREVIEWS_BUCKET = 'previews';
 const FILES_BUCKET = env.supabase.storageBucket; // 'materials'
+
+// Extrae las primeras N paginas de un PDF -> Buffer (para el preview publico).
+async function makePreview(buffer, n = 3) {
+  const src = await PDFDocument.load(buffer, { ignoreEncryption: true });
+  const out = await PDFDocument.create();
+  const count = Math.min(n, src.getPageCount());
+  const pages = await out.copyPages(src, Array.from({ length: count }, (_, i) => i));
+  pages.forEach((p) => out.addPage(p));
+  return Buffer.from(await out.save());
+}
 
 // NFD + quitar todo lo no-ASCII (acentos quedan como letra base) -> slug.
 const slugify = (s) =>
@@ -79,7 +91,7 @@ export const listMaterials = asyncHandler(async (_req, res) => {
 
 // POST /api/admin/materials  (multipart: file, cover + campos)
 export const createMaterial = asyncHandler(async (req, res) => {
-  const { category_id, title, description, features, price } = req.body;
+  const { category_id, title, description, features, price, price_view } = req.body;
   const file = req.files?.file?.[0];
   const cover = req.files?.cover?.[0];
 
@@ -87,7 +99,9 @@ export const createMaterial = asyncHandler(async (req, res) => {
   const errors = [];
   if (!category_id) errors.push('categoría requerida');
   if (!title?.trim()) errors.push('título requerido');
-  if (!(Number(price) >= 0)) errors.push('precio inválido');
+  if (!(Number(price) >= 0)) errors.push('precio de descarga inválido');
+  if (price_view !== undefined && price_view !== '' && !(Number(price_view) >= 0))
+    errors.push('precio de ver online inválido');
   if (!file) errors.push('archivo requerido');
   if (errors.length) return res.status(400).json({ error: errors.join(', ') });
 
@@ -117,6 +131,23 @@ export const createMaterial = asyncHandler(async (req, res) => {
     cover_image_url = supabase.storage.from(COVERS_BUCKET).getPublicUrl(coverKey).data.publicUrl;
   }
 
+  // ---- Preview de 3 paginas (solo PDFs) -> bucket publico ----
+  let preview_url = null;
+  if (extOf(file.originalname) === 'pdf') {
+    try {
+      const previewBuf = await makePreview(file.buffer, 3);
+      const previewKey = `${base}-preview.pdf`;
+      const up3 = await supabase.storage.from(PREVIEWS_BUCKET).upload(previewKey, previewBuf, {
+        contentType: 'application/pdf', upsert: false,
+      });
+      if (!up3.error) {
+        preview_url = supabase.storage.from(PREVIEWS_BUCKET).getPublicUrl(previewKey).data.publicUrl;
+      }
+    } catch {
+      // Si el PDF no se puede procesar, seguimos sin preview.
+    }
+  }
+
   // ---- Insertar fila ----
   const { data, error } = await supabase.from('materials').insert({
     category_id,
@@ -124,7 +155,9 @@ export const createMaterial = asyncHandler(async (req, res) => {
     description: description?.trim() || null,
     features: features?.trim() || null,
     price: Number(price),
+    price_view: price_view !== undefined && price_view !== '' ? Number(price_view) : null,
     cover_image_url,
+    preview_url,
     file_url: fileKey,
     file_type: extOf(file.originalname),
     is_active: true,
@@ -138,10 +171,13 @@ export const createMaterial = asyncHandler(async (req, res) => {
 export const updateMaterial = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const patch = {};
-  for (const k of ['title', 'description', 'features', 'price', 'is_active']) {
+  for (const k of ['title', 'description', 'features', 'price', 'price_view', 'is_active']) {
     if (req.body[k] !== undefined) patch[k] = req.body[k];
   }
   if (patch.price !== undefined) patch.price = Number(patch.price);
+  if (patch.price_view !== undefined) {
+    patch.price_view = patch.price_view === null || patch.price_view === '' ? null : Number(patch.price_view);
+  }
   if (Object.keys(patch).length === 0) {
     return res.status(400).json({ error: 'Nada para actualizar' });
   }

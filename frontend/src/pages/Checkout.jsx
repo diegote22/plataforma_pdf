@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { getMaterial, createOrder } from '../lib/api.js';
 import { metaFor, fmtPrice } from '../lib/meta.js';
 import { Loading, ErrorState } from '../components/States.jsx';
@@ -9,6 +9,8 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export default function Checkout() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const access = params.get('access') === 'view' ? 'view' : 'download';
   const [material, setMaterial] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadErr, setLoadErr] = useState(null);
@@ -47,6 +49,7 @@ export default function Checkout() {
       const { order_id, download_token, init_point } = await createOrder({
         ...form,
         material_id: id,
+        access_type: access,
       });
       // Guardamos el token para recuperarlo al volver del pago.
       localStorage.setItem(`order_${order_id}`, download_token);
@@ -61,6 +64,8 @@ export default function Checkout() {
   if (loadErr) return <ErrorState message={loadErr} onRetry={() => navigate(0)} />;
 
   const m = metaFor(material.categories?.slug);
+  const unitPrice = access === 'view' ? material.price_view : material.price;
+  const modeLabel = access === 'view' ? 'Ver online' : 'Descargar';
 
   return (
     <div className="mx-auto max-w-3xl px-5 py-8 sm:px-8">
@@ -83,10 +88,10 @@ export default function Checkout() {
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="label" style={{ color: m.color }}>{material.categories?.name}</p>
+          <p className="label" style={{ color: m.color }}>{material.categories?.name} · {modeLabel}</p>
           <p className="truncate font-display text-lg font-semibold">{material.title}</p>
         </div>
-        <p className="font-mono text-xl font-bold">{fmtPrice(material.price)}</p>
+        <p className="font-mono text-xl font-bold">{fmtPrice(unitPrice)}</p>
       </div>
 
       {/* Formulario */}
@@ -109,7 +114,7 @@ export default function Checkout() {
 
         <button type="submit" disabled={submitting}
           className="btn-ink mt-2 flex items-center justify-center gap-2 px-6 py-4 text-lg disabled:opacity-60">
-          {submitting ? 'Redirigiendo a Mercado Pago…' : `Pagar ${fmtPrice(material.price)} →`}
+          {submitting ? 'Redirigiendo a Mercado Pago…' : `Pagar ${fmtPrice(unitPrice)} →`}
         </button>
 
         <p className="label text-center text-ink-faint">
